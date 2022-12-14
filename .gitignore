@@ -1,0 +1,8 @@
+# .gitignore
+
+out/
+build/
+.vs/
+.vscode/
+
+CMakePresets.json

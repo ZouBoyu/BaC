@@ -1,0 +1,12 @@
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
+
+// Generate configuration from CMAKE settings
+constexpr const char* PROJECT_VERSION = "@PROJECT_VERSION@";
+constexpr const char* PROJECT_BUILDER = "@PROJECT_BUILDER@";
+constexpr const char* PROJECT_RELEASE_TYPE = "@PROJECT_RELEASE_TYPE@";
+#define PROJECT_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define PROJECT_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define PROJECT_VERSION_PATCH @PROJECT_VERSION_PATCH@
+
+#endif // _CONFIG_H_
