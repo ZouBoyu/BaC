@@ -1,4 +1,4 @@
-﻿# CMakeList.txt: The CMake project of BaC, where build process is defined.
+# CMakeList.txt: The CMake project of BaC, where build process is defined.
 cmake_minimum_required (VERSION 3.8)
 
 # Set infomation of the project
@@ -9,6 +9,11 @@ set (PROJECT_RELEASE_TYPE "preview")
 # Require C++ 11 standard
 set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Configure option
+if(MSVC)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
+endif()
 
 # Generate configuration header file based on configure.in.h
 configure_file ("configure.in.h" "configure.h")

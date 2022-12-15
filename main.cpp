@@ -1,4 +1,4 @@
-﻿/*
+/*
  * main.cpp: Define the entry point for the application.
  * Copyright 2022 Zou Boyu
  *
@@ -15,10 +15,17 @@
  * limitations under the License.
  */
 
+#ifdef _WIN32
+#include <windows.h>
+#endif // _WIN32
+
 #include "program.h"
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
+#ifdef _WIN32
+    SetConsoleOutputCP(65001);  // Using UTF-8 on Windows
+#endif
     program prog(argc, argv);
     prog.output_info();
     return prog.start_game();

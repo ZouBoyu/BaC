@@ -1,7 +1,7 @@
 /*
  * advget.h: Define advanced get data functions.
  * Copyright 2022 Zou Boyu
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,7 @@
 #include <istream>
 #include <string>
 
-// Get data from streams safely to prevent problems caused by different data types
+ // Get data from streams safely to prevent problems caused by different data types
 template<typename T>
 bool safe_get(std::istream& is, T& data)
 {
