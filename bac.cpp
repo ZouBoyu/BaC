@@ -30,21 +30,6 @@ bac::bac(unsigned short t_len) :
         throw std::invalid_argument("Argument too big or small!");
 }
 
-unsigned bac::get_answer()
-{
-    return answer;
-}
-
-unsigned bac::get_count()
-{
-    return count;
-}
-
-unsigned short bac::get_length()
-{
-    return length;
-}
-
 void bac::generate()
 {
     answer = 0;

@@ -18,7 +18,7 @@
 #ifndef _ADVGET_H_
 #define _ADVGET_H_
 
-#include <istream>
+#include <iostream>
 #include <string>
 
  // Get data from streams safely to prevent problems caused by different data types
@@ -44,7 +44,7 @@ T interactive_safe_get(const std::string& prompt)
     bool flag = false;
     do
     {
-        cout << prompt;
+        std::cout << prompt;
         flag = safe_get(std::cin, val);
     } while (!flag);
     return val;
@@ -57,7 +57,7 @@ T interactive_safe_get(const std::string& prompt, const T max, const T min)
     bool flag = false;
     do
     {
-        cout << prompt;
+        std::cout << prompt;
         flag = safe_get(std::cin, val);
     } while (!(flag && val <= max && val >= min));
     return val;

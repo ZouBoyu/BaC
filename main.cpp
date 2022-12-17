@@ -28,5 +28,5 @@ int main(int argc, char** argv)
 #endif
     program prog(argc, argv);
     prog.output_info();
-    return prog.start_game();
+    return prog.exec();
 }

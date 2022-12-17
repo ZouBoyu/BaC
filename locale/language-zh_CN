@@ -1,0 +1,24 @@
+^LANGUAGE@简体中文
+# 格式: 原文@译文
+# 示例: hello@HELLO
+Input@输入
+Input digits of the number@输入数字的位数
+Count:@计数：
+Result:@结果：
+Congratulation! RIGHT!@恭喜！正确！
+Final count:@总计数：
+Input Q/q to quit, N/n to restart.@输入Q/q退出，N/n重新开始。
+Unkown option@未知选项
+Bulls and Cows Game@猜数字游戏
+Version@版本
+Licensed under the Apache License Version 2.0@根据Apache License Version 2.0许可
+Current Language@当前语言
+Help:@帮助：
+Option:@选项：
+The computer will generate a number without repeating digits.@计算机将生成一个没有重复数位的数。
+Every time you guess,@你每次猜，
+the computer will output []A[]B according to this number.@计算机将根据这个数字输出[]A[]B。
+The number before A is the number of correct number,@A前的数是正确的个数，
+The number before B is the number of value correct but postion wrong.@B前的数是值对但位置错的个数。
+For example: Answer: 5834 Input: 5346 Output: 1A2B@例如： 答案：5834 输入：5346 输出：1A2B
+View help@显示帮助

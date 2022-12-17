@@ -1,4 +1,4 @@
-﻿/*
+/*
  * bac.h: Declare interfaces about Bulls and Cows game.
  * Copyright 2022 Zou Boyu
  *
@@ -31,9 +31,9 @@ public:
     bac() = default;
     bac(unsigned short t_len);
 
-    unsigned get_answer();
-    unsigned get_count();
-    unsigned short get_length();
+    inline unsigned get_answer() { return answer; }
+    inline unsigned get_count() { return count; }
+    inline unsigned short get_length() { return length; }
 
     void generate();    // Generate four digits with different numbers
     judge_result judge(unsigned t_num);    // Compare parameters with answers

@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+#include <stdexcept>
 #include <cstring>
 #include <cstdlib>
 
@@ -26,56 +27,20 @@
 using std::cout;
 using std::endl;
 
-program::program(int t_argc, char** t_argv)
+program::program(int t_argc, char** t_argv) :
+    argc(t_argc), argv(t_argv), game(nullptr), current_dir(""), ts("")
 {
-    argc = t_argc;
-    argv = t_argv;
     option_proc(); // Process options
-}
-
-void program::option_proc()
-{
-    bool exit = false;
-    if (argc <= 1)
-        return; // Return if no arguments
-    for (char* arg = argv[1]; arg != argv[0] + argc; ++arg)
-    {
-        // Compare the argument with option
-        if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
-        {
-            cout << "帮助(Help): " << endl;
-            cout << "--------------------" << endl;
-            cout << "    计算机将生成没有重复数的数字， 您来猜。" << endl;
-            cout << "每次猜测数字，计算机就根据这个数字输出[]A[]B，"
-                << "其中A前面的数字表示数值和位置正确的数值的个数，"
-                << "而B前的数字表示数字正确而位置不对的数值的个数。" << endl;
-            cout << "例如：正确答案为 5834，而猜的人猜 5346，则输出是 1A2B。" << endl;
-            cout << "--------------------" << endl;
-            cout << "选项(Option): " << endl;
-            cout << " -h, --help    显示帮助" << endl;
-            cout << "--------------------" << endl;
-            exit = true;
-        }
-        else
-        {
-            std::cerr << "Unkown option: \"" << arg << "\"" << endl;
-            exit = true;
-        }
-    }
-    if (exit == true)
-    {
-        std::exit(2);   // Exit the program
-    }
 }
 
 // Output infomation of the application
 void program::output_info()
 {
-    cout << "猜数字游戏(Bulls and Cows Game)" << endl;
-    cout << "版本(Version): " << PROJECT_VERSION << '-' << PROJECT_RELEASE_TYPE
-        << " (" << PROJECT_BUILDER << ")" << endl;
-    cout << "根据Apache许可证2.0版许可" << endl
-        << "Licensed under the Apache License Version 2.0" << endl;
+    cout << ts("Bulls and Cows Game") << endl;
+    cout << ts("Version") << ": " << PROJECT_VERSION << '-' << PROJECT_RELEASE_TYPE
+         << '(' << PROJECT_BUILDER << ')' << endl;
+    cout << ts("Licensed under the Apache License Version 2.0") << endl;
+    cout << ts("Current Language") << ": " << ts.get_language() << endl;
 }
 
 // Set attribute of the game
@@ -83,7 +48,7 @@ void program::set_game_attribute()
 {
     // Get digits of the number
     unsigned short len = interactive_safe_get(
-        "输入数字位数(Input digits of the number) (0-9): ", 9, 1);
+        ts("Input digits of the number") + " (0-9): ", 9, 1);
 
     // Allocate a bac object and have it owned by std::unique_ptr
     game = std::make_unique<bac>(len);
@@ -92,12 +57,13 @@ void program::set_game_attribute()
     game->generate();
 }
 // Start the game
-int program::start_game()
+int program::exec()
 {
     set_game_attribute();
-    while (true)
+    bool exit = false;
+    while (!exit)
     {
-        unsigned num = interactive_safe_get<unsigned>("输入(Input) > ");
+        unsigned num = interactive_safe_get<unsigned>(ts("Input") + "> ");
         bac::judge_result result{ 0, 0 };
 
         // Compare num with the answer and save the result
@@ -107,34 +73,97 @@ int program::start_game()
         }
         catch (const std::invalid_argument& err)
         {
-            std::cerr << err.what() << '\n';
+            std::cerr << "Error:" << err.what() << '\n';
         }
 
-        if (result.A == game->get_length())
+        if (result.A != game->get_length())
+        {
+            cout << ts("Count:") + ' ' << game->get_count() << endl;
+            cout << ts("Result:") + " *" << result.A << "A" << result.B << "B*" << endl;
+        }
+        else
         {
             // Game over
             cout << "====================" << endl;
-            cout << "恭喜! 正确！" << endl;
-            cout << "Congratulation! RIGHT!" << endl;
-            cout << "总计数(Final count): " << game->get_count() << endl;
-            cout << "Q/q退出，N/n重新开始(Input Q/q to quit, N/n to restart)" << endl;
-            // Quit or Restart
+            cout << ts("Congratulation! RIGHT!") << endl;
+            cout << ts("Final count:") + ' ' << game->get_count() << endl;
+            cout << ts("Input Q/q to quit, N/n to restart.") << endl;
+            // Reset standard input stream
             std::cin.clear();
             std::cin.ignore(4096, '\n');
-            char ch = std::cin.get();
-            if (ch == 'q' || ch == 'Q')
+            do
             {
-                break;
-            }
-            else if (ch == 'n' || ch == 'N')
-            {
-                set_game_attribute();
-                continue;
-            }
+                char ch = '\0';
+                safe_get(std::cin, ch);
+
+                // Quit or Restart
+                if (ch == 'q' || ch == 'Q')
+                {
+                    exit = true;    // Exit in next cycle
+                    break;
+                }
+                else if (ch == 'n' || ch == 'N')
+                {
+                    set_game_attribute();
+                    break;
+                }
+            } while (true);
+            continue;
         }
-        cout << "计数(Count): " << game->get_count() << endl;
-        cout << "结果(Result): *" << result.A << "A" << result.B << "B*" << endl;
     }
 
     return EXIT_SUCCESS;    // success exit
+}
+
+void program::option_proc()
+{
+    bool exit = false;
+    if (argc == 0)
+        throw std::invalid_argument("Error: 'argc' can not be 0!");
+
+    std::string path(argv[0]);
+    char separator = '\0';
+#ifdef _WIN32
+    // A Windows path: "C:\\Users\\user\\data"
+    separator = '\\';
+#else
+    // A Unix-like path: "/home/user/data"
+    separator = '/';
+#endif // _WIN32
+    current_dir = path.substr(0, path.find_last_of(separator)); // Get the directory path
+    ts.load(current_dir + separator + "language");
+
+    if (argc == 1)
+        return;
+
+    // Foreach in argv
+    for (char* arg = argv[1]; arg != argv[0] + argc; ++arg)
+    {
+        // Compare the argument with option
+
+        if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
+        {
+            cout << ts("Help:") << endl;
+            cout << "--------------------" << endl;
+            cout << ts("The computer will generate a number without repeating digits.");
+            cout << ts("Every time you guess,")
+                 << ts("the computer will output []A[]B according to this number.")
+                 << endl;
+            cout << ts("The number before A is the number of correct number,")
+                 << ts("The number before B is the number of value correct but postion wrong.")
+                 << endl;
+            cout << ts("For example: Answer: 5834 Input: 5346 Output: 1A2B")
+                 << endl;
+            cout << "--------------------" << endl;
+            cout << ts("Option:") << endl;
+            cout << " -h, --help    " << ts("View help") << endl;
+            cout << "--------------------" << endl;
+            std::exit(3);
+        }
+        else
+        {
+            std::cerr << ts("Unkown option") + ": \"" << arg << "\"!" << endl;
+            std::exit(EXIT_FAILURE);
+        }
+    }
 }

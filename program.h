@@ -21,20 +21,25 @@
 #include <memory>
 
 #include "bac.h"
+#include "translate.h"
 
 class program
 {
 public:
-    program() = default;
     program(int t_argc, char** t_argv);
     void output_info(); // Output infomation of the application
     void set_game_attribute();  // Set attribute of the game
-    int start_game();
+    int exec(); // Execute
 
 private:
-    int argc = 0;
-    char** argv = nullptr;
-    std::unique_ptr<bac> game = nullptr;
+    int argc;
+    char** argv;
+    std::unique_ptr<bac> game;
+    std::string current_dir;
+    translate ts;
+
+    // Get directory path from a file path
+    std::string get_dir_path(const std::string& path);
     void option_proc();    // Process options
 };
 
